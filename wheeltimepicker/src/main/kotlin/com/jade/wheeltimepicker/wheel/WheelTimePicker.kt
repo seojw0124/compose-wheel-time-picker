@@ -44,6 +44,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import java.util.Locale
 import kotlin.math.abs
@@ -296,7 +298,7 @@ private fun AmPmColumn(
     isFadeEdgeEnabled: Boolean = false,
     isWheelEffectEnabled: Boolean = false,
 ) {
-    val amPmItems = remember(labels) { listOf(labels.am, labels.pm) }
+    val amPmItems = remember(labels) { listOf(labels.am, labels.pm) }.toImmutableList()
 
     BasicScrollableColumn(
         items = amPmItems,
@@ -327,7 +329,7 @@ private fun HourColumn(
     modifier: Modifier = Modifier,
 ) {
     BasicScrollableColumn(
-        items = (1..12).map { it.toString() },
+        items = (1..12).map { it.toString() }.toImmutableList(),
         initialIndex = hour12 - 1,
         externalSelectedIndex = hour12 - 1,
         onValueChange = { onHourChange(it + 1) },
@@ -358,7 +360,7 @@ private fun MinuteColumn(
     val items =
         remember(minuteInterval) {
             (0 until 60 step minuteInterval).map { it.toString().padStart(2, '0') }
-        }
+        }.toImmutableList()
     val currentIndex = (minute / minuteInterval).coerceIn(0, items.size - 1)
 
     BasicScrollableColumn(
@@ -379,7 +381,7 @@ private fun MinuteColumn(
 
 @Composable
 private fun BasicScrollableColumn(
-    items: List<String>,
+    items: ImmutableList<String>,
     initialIndex: Int,
     externalSelectedIndex: Int,
     onValueChange: (Int) -> Unit,
