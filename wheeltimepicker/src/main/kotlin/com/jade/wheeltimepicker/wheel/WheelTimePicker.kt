@@ -173,6 +173,7 @@ object WheelTimePickerDefaults {
 
     val itemVerticalPadding: Dp = 20.dp
     const val visibleItemCount: Int = 3
+    const val wheelEffectRotationXDegree: Float = 18f
 
     @Composable
     fun colors(
@@ -214,9 +215,13 @@ fun WheelTimePicker(
     visibleItemCount: Int = WheelTimePickerDefaults.visibleItemCount,
     isFadeEdgeEnabled: Boolean = false,
     isWheelEffectEnabled: Boolean = false,
+    wheelEffectRotationXDegree: Float = WheelTimePickerDefaults.wheelEffectRotationXDegree,
 ) {
     require(visibleItemCount >= 3 && visibleItemCount % 2 == 1) {
         "visibleItemCount must be odd and >= 3"
+    }
+    require(wheelEffectRotationXDegree >= 0f) {
+        "wheelEffectRotationXDegree must be >= 0"
     }
 
     val density = LocalDensity.current
@@ -245,6 +250,7 @@ fun WheelTimePicker(
             colors = colors,
             isFadeEdgeEnabled = isFadeEdgeEnabled,
             isWheelEffectEnabled = isWheelEffectEnabled,
+            wheelEffectRotationXDegree = wheelEffectRotationXDegree,
             modifier = Modifier.weight(1f),
         )
         HourColumn(
@@ -262,6 +268,7 @@ fun WheelTimePicker(
             colors = colors,
             isFadeEdgeEnabled = isFadeEdgeEnabled,
             isWheelEffectEnabled = isWheelEffectEnabled,
+            wheelEffectRotationXDegree = wheelEffectRotationXDegree,
             modifier = Modifier.weight(1f),
         )
         Text(
@@ -280,6 +287,7 @@ fun WheelTimePicker(
             colors = colors,
             isFadeEdgeEnabled = isFadeEdgeEnabled,
             isWheelEffectEnabled = isWheelEffectEnabled,
+            wheelEffectRotationXDegree = wheelEffectRotationXDegree,
             modifier = Modifier.weight(1f),
         )
     }
@@ -297,6 +305,7 @@ private fun AmPmColumn(
     modifier: Modifier = Modifier,
     isFadeEdgeEnabled: Boolean = false,
     isWheelEffectEnabled: Boolean = false,
+    wheelEffectRotationXDegree: Float = WheelTimePickerDefaults.wheelEffectRotationXDegree,
 ) {
     val amPmItems = remember(labels) { listOf(labels.am, labels.pm) }.toImmutableList()
 
@@ -312,6 +321,7 @@ private fun AmPmColumn(
         isInfinite = false,
         isFadeEdgeEnabled = isFadeEdgeEnabled,
         isWheelEffectEnabled = isWheelEffectEnabled,
+        wheelEffectRotationXDegree = wheelEffectRotationXDegree,
         modifier = modifier,
     )
 }
@@ -326,6 +336,7 @@ private fun HourColumn(
     colors: WheelTimePickerColors,
     isFadeEdgeEnabled: Boolean,
     isWheelEffectEnabled: Boolean,
+    wheelEffectRotationXDegree: Float,
     modifier: Modifier = Modifier,
 ) {
     BasicScrollableColumn(
@@ -340,6 +351,7 @@ private fun HourColumn(
         isInfinite = true,
         isFadeEdgeEnabled = isFadeEdgeEnabled,
         isWheelEffectEnabled = isWheelEffectEnabled,
+        wheelEffectRotationXDegree = wheelEffectRotationXDegree,
         modifier = modifier,
     )
 }
@@ -355,6 +367,7 @@ private fun MinuteColumn(
     colors: WheelTimePickerColors,
     isFadeEdgeEnabled: Boolean,
     isWheelEffectEnabled: Boolean,
+    wheelEffectRotationXDegree: Float,
     modifier: Modifier = Modifier,
 ) {
     val items =
@@ -375,6 +388,7 @@ private fun MinuteColumn(
         isInfinite = true,
         isFadeEdgeEnabled = isFadeEdgeEnabled,
         isWheelEffectEnabled = isWheelEffectEnabled,
+        wheelEffectRotationXDegree = wheelEffectRotationXDegree,
         modifier = modifier,
     )
 }
@@ -391,6 +405,7 @@ private fun BasicScrollableColumn(
     colors: WheelTimePickerColors,
     isFadeEdgeEnabled: Boolean,
     isWheelEffectEnabled: Boolean,
+    wheelEffectRotationXDegree: Float,
     modifier: Modifier = Modifier,
     isInfinite: Boolean = true,
 ) {
@@ -499,7 +514,7 @@ private fun BasicScrollableColumn(
                                     val distanceAbs = abs(distanceRatio)
 
                                     if (isWheelEffectEnabled) {
-                                        rotationX = distanceRatio * -30f
+                                        rotationX = distanceRatio * -wheelEffectRotationXDegree
                                         val scale = 1f - (distanceAbs * 0.15f)
                                         scaleX = scale
                                         scaleY = scale
