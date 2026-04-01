@@ -1,5 +1,6 @@
 package com.jade.wheeltimepicker.wheel
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -11,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -44,9 +44,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import java.util.Locale
 import kotlin.math.abs
-import kotlinx.coroutines.launch
 
 @Stable
 interface WheelTimePickerState {
@@ -142,6 +142,7 @@ fun rememberWheelTimePickerState(
 data class WheelTimePickerColors(
     val selectedTextColor: Color,
     val unSelectedTextColor: Color,
+    val backgroundColor: Color,
     val fadeColor: Color,
 )
 
@@ -169,11 +170,13 @@ object WheelTimePickerDefaults {
     fun colors(
         selectedTextColor: Color = MaterialTheme.colorScheme.onSurface,
         unSelectedTextColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+        backgroundColor: Color = Color.White,
         fadeColor: Color = MaterialTheme.colorScheme.surface,
     ): WheelTimePickerColors =
         WheelTimePickerColors(
             selectedTextColor = selectedTextColor,
             unSelectedTextColor = unSelectedTextColor,
+            backgroundColor = backgroundColor,
             fadeColor = fadeColor,
         )
 
@@ -217,7 +220,10 @@ fun WheelTimePicker(
         }
 
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(colors.backgroundColor),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
