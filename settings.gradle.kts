@@ -24,4 +24,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "WheelTimePicker"
 include(":app")
+include(":wheeltimepicker")
  

@@ -64,6 +64,12 @@ private class WheelTimePickerStateImpl(
     initialMinute: Int,
     override val minuteInterval: Int,
 ) : WheelTimePickerState {
+    init {
+        require(minuteInterval in 1..30 && 60 % minuteInterval == 0) {
+            "minuteInterval must be a divisor of 60 and in 1..30"
+        }
+    }
+
     private var _hour by mutableIntStateOf(initialHour)
     private var _minute by mutableIntStateOf(initialMinute)
 
@@ -170,8 +176,8 @@ object WheelTimePickerDefaults {
     fun colors(
         selectedTextColor: Color = MaterialTheme.colorScheme.onSurface,
         unSelectedTextColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
-        backgroundColor: Color = Color.White,
-        fadeColor: Color = MaterialTheme.colorScheme.surface,
+        backgroundColor: Color = Color(0xFFFFFFFF),
+        fadeColor: Color = backgroundColor,
     ): WheelTimePickerColors =
         WheelTimePickerColors(
             selectedTextColor = selectedTextColor,
