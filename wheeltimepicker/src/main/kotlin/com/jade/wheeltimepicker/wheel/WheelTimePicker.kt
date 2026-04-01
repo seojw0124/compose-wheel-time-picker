@@ -172,6 +172,9 @@ object WheelTimePickerDefaults {
     const val MINUTE_INTERVAL_10 = 10
     const val VISIBLE_ITEM_COUNT: Int = 3
     const val WHEEL_EFFECT_ROTATION_X_DEGREE: Float = 18f
+    const val WHEEL_EFFECT_ALPHA_FALLOFF: Float = 0.6f
+    const val UNSELECTED_ITEM_MIN_ALPHA: Float = 0.3f
+    const val FADE_EDGE_STRENGTH: Float = 0.9f
 
     val itemVerticalPadding: Dp = 20.dp
 
@@ -215,12 +218,20 @@ fun WheelTimePicker(
     isFadeEdgeEnabled: Boolean = false,
     isWheelEffectEnabled: Boolean = false,
     wheelEffectRotationXDegree: Float = WheelTimePickerDefaults.WHEEL_EFFECT_ROTATION_X_DEGREE,
+    unselectedItemMinAlpha: Float = WheelTimePickerDefaults.UNSELECTED_ITEM_MIN_ALPHA,
+    fadeEdgeStrength: Float = WheelTimePickerDefaults.FADE_EDGE_STRENGTH,
 ) {
     require(visibleItemCount >= 3 && visibleItemCount % 2 == 1) {
         "visibleItemCount must be odd and >= 3"
     }
     require(wheelEffectRotationXDegree >= 0f) {
         "wheelEffectRotationXDegree must be >= 0"
+    }
+    require(unselectedItemMinAlpha in 0f..1f) {
+        "unselectedItemMinAlpha must be in 0..1"
+    }
+    require(fadeEdgeStrength in 0f..1f) {
+        "fadeEdgeStrength must be in 0..1"
     }
 
     val density = LocalDensity.current
@@ -250,6 +261,8 @@ fun WheelTimePicker(
             isFadeEdgeEnabled = isFadeEdgeEnabled,
             isWheelEffectEnabled = isWheelEffectEnabled,
             wheelEffectRotationXDegree = wheelEffectRotationXDegree,
+            unselectedItemMinAlpha = unselectedItemMinAlpha,
+            fadeEdgeStrength = fadeEdgeStrength,
             modifier = Modifier.weight(1f),
         )
         HourColumn(
@@ -268,6 +281,8 @@ fun WheelTimePicker(
             isFadeEdgeEnabled = isFadeEdgeEnabled,
             isWheelEffectEnabled = isWheelEffectEnabled,
             wheelEffectRotationXDegree = wheelEffectRotationXDegree,
+            unselectedItemMinAlpha = unselectedItemMinAlpha,
+            fadeEdgeStrength = fadeEdgeStrength,
             modifier = Modifier.weight(1f),
         )
         Text(
@@ -287,6 +302,8 @@ fun WheelTimePicker(
             isFadeEdgeEnabled = isFadeEdgeEnabled,
             isWheelEffectEnabled = isWheelEffectEnabled,
             wheelEffectRotationXDegree = wheelEffectRotationXDegree,
+            unselectedItemMinAlpha = unselectedItemMinAlpha,
+            fadeEdgeStrength = fadeEdgeStrength,
             modifier = Modifier.weight(1f),
         )
     }
@@ -305,6 +322,8 @@ private fun AmPmColumn(
     isFadeEdgeEnabled: Boolean = false,
     isWheelEffectEnabled: Boolean = false,
     wheelEffectRotationXDegree: Float = WheelTimePickerDefaults.WHEEL_EFFECT_ROTATION_X_DEGREE,
+    unselectedItemMinAlpha: Float = WheelTimePickerDefaults.UNSELECTED_ITEM_MIN_ALPHA,
+    fadeEdgeStrength: Float = WheelTimePickerDefaults.FADE_EDGE_STRENGTH,
 ) {
     val amPmItems = remember(labels) { listOf(labels.am, labels.pm) }.toImmutableList()
 
@@ -321,6 +340,8 @@ private fun AmPmColumn(
         isFadeEdgeEnabled = isFadeEdgeEnabled,
         isWheelEffectEnabled = isWheelEffectEnabled,
         wheelEffectRotationXDegree = wheelEffectRotationXDegree,
+        unselectedItemMinAlpha = unselectedItemMinAlpha,
+        fadeEdgeStrength = fadeEdgeStrength,
         modifier = modifier,
     )
 }
@@ -336,6 +357,8 @@ private fun HourColumn(
     isFadeEdgeEnabled: Boolean,
     isWheelEffectEnabled: Boolean,
     wheelEffectRotationXDegree: Float,
+    unselectedItemMinAlpha: Float,
+    fadeEdgeStrength: Float,
     modifier: Modifier = Modifier,
 ) {
     BasicScrollableColumn(
@@ -351,6 +374,8 @@ private fun HourColumn(
         isFadeEdgeEnabled = isFadeEdgeEnabled,
         isWheelEffectEnabled = isWheelEffectEnabled,
         wheelEffectRotationXDegree = wheelEffectRotationXDegree,
+        unselectedItemMinAlpha = unselectedItemMinAlpha,
+        fadeEdgeStrength = fadeEdgeStrength,
         modifier = modifier,
     )
 }
@@ -367,6 +392,8 @@ private fun MinuteColumn(
     isFadeEdgeEnabled: Boolean,
     isWheelEffectEnabled: Boolean,
     wheelEffectRotationXDegree: Float,
+    unselectedItemMinAlpha: Float,
+    fadeEdgeStrength: Float,
     modifier: Modifier = Modifier,
 ) {
     val items =
@@ -388,6 +415,8 @@ private fun MinuteColumn(
         isFadeEdgeEnabled = isFadeEdgeEnabled,
         isWheelEffectEnabled = isWheelEffectEnabled,
         wheelEffectRotationXDegree = wheelEffectRotationXDegree,
+        unselectedItemMinAlpha = unselectedItemMinAlpha,
+        fadeEdgeStrength = fadeEdgeStrength,
         modifier = modifier,
     )
 }
@@ -405,6 +434,8 @@ private fun BasicScrollableColumn(
     isFadeEdgeEnabled: Boolean,
     isWheelEffectEnabled: Boolean,
     wheelEffectRotationXDegree: Float,
+    unselectedItemMinAlpha: Float,
+    fadeEdgeStrength: Float,
     modifier: Modifier = Modifier,
     isInfinite: Boolean = true,
 ) {
@@ -478,7 +509,7 @@ private fun BasicScrollableColumn(
                 .height(itemHeight * visibleItemCount)
                 .then(
                     if (isFadeEdgeEnabled) {
-                        Modifier.fadeEdge(colors.fadeColor)
+                        Modifier.fadeEdge(colors.fadeColor, fadeEdgeStrength)
                     } else {
                         Modifier
                     },
@@ -519,12 +550,14 @@ private fun BasicScrollableColumn(
                                         val scale = 1f - (distanceAbs * 0.15f)
                                         scaleX = scale
                                         scaleY = scale
-                                        alpha = (1f - (distanceAbs * 0.5f)).coerceIn(0.3f, 1f)
+                                        alpha =
+                                            (1f - (distanceAbs * WheelTimePickerDefaults.WHEEL_EFFECT_ALPHA_FALLOFF))
+                                                .coerceIn(unselectedItemMinAlpha, 1f)
                                     } else {
-                                        alpha = (1f - distanceAbs).coerceIn(0.3f, 1f)
+                                        alpha = (1f - distanceAbs).coerceIn(unselectedItemMinAlpha, 1f)
                                     }
                                 } else {
-                                    alpha = 0.3f
+                                    alpha = unselectedItemMinAlpha
                                 }
                             }
                             .clickable(
@@ -561,15 +594,18 @@ private fun BasicScrollableColumn(
 }
 
 @Composable
-private fun Modifier.fadeEdge(color: Color): Modifier {
+private fun Modifier.fadeEdge(
+    color: Color,
+    strength: Float = WheelTimePickerDefaults.FADE_EDGE_STRENGTH,
+): Modifier {
     val fadeEdgeBrushColor =
-        remember(color) {
+        remember(color, strength) {
             arrayOf(
-                0f to color.copy(alpha = 0.9f),
-                0.25f to color.copy(alpha = 0.2f),
+                0f to color.copy(alpha = strength),
+                0.25f to color.copy(alpha = strength * 0.25f),
                 0.5f to Color.Transparent,
-                0.75f to color.copy(alpha = 0.2f),
-                1f to color.copy(alpha = 0.9f),
+                0.75f to color.copy(alpha = strength * 0.25f),
+                1f to color.copy(alpha = strength),
             )
         }
 
