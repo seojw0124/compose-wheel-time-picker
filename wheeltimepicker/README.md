@@ -13,28 +13,24 @@ This module contains the reusable `WheelTimePicker` Compose library.
 
 Internal UI building blocks are intentionally hidden with `private`/module-private scope.
 
+## Maven Central (Simple)
+This module uses `com.vanniktech.maven.publish`.
+
+1. Fill values from `gradle/publish.properties.sample`
+2. Put secrets in `~/.gradle/gradle.properties`
+3. Publish:
+
+Upload only (manual release in Central Portal):
+```bash
+./gradlew :wheeltimepicker:publishToMavenCentral
+```
+
+Upload + automatic release:
+```bash
+./gradlew :wheeltimepicker:publishAndReleaseToMavenCentral
+```
+
 ## Local Publish
 ```bash
-./gradlew :wheeltimepicker:publishReleasePublicationToLocalBuildRepoRepository
-```
-
-Published artifacts are generated under:
-```text
-wheeltimepicker/build/repo
-```
-
-## Maven Central Publish
-1. Fill your values using `gradle/publish.properties.sample`
-2. Put secrets in `~/.gradle/gradle.properties`
-3. Use `SNAPSHOT` suffix for snapshot releases
-
-Release publish command:
-```bash
-./gradlew :wheeltimepicker:publishReleasePublicationToSonatypeRepository
-```
-
-Snapshot publish command:
-```bash
-./gradlew :wheeltimepicker:publishReleasePublicationToSonatypeRepository \
-  -PPUBLISH_VERSION=0.1.1-SNAPSHOT
+./gradlew :wheeltimepicker:publishToMavenLocal
 ```
