@@ -170,10 +170,10 @@ object WheelTimePickerDefaults {
     const val MINUTE_INTERVAL_1 = 1
     const val MINUTE_INTERVAL_5 = 5
     const val MINUTE_INTERVAL_10 = 10
+    const val VISIBLE_ITEM_COUNT: Int = 3
+    const val WHEEL_EFFECT_ROTATION_X_DEGREE: Float = 18f
 
     val itemVerticalPadding: Dp = 20.dp
-    const val visibleItemCount: Int = 3
-    const val wheelEffectRotationXDegree: Float = 18f
 
     @Composable
     fun colors(
@@ -212,10 +212,10 @@ fun WheelTimePicker(
     styles: WheelTimePickerTextStyles = WheelTimePickerDefaults.textStyles(),
     amPmLabels: WheelTimePickerAmPmLabels = WheelTimePickerDefaults.amPmLabels(),
     itemVerticalPadding: Dp = WheelTimePickerDefaults.itemVerticalPadding,
-    visibleItemCount: Int = WheelTimePickerDefaults.visibleItemCount,
+    visibleItemCount: Int = WheelTimePickerDefaults.VISIBLE_ITEM_COUNT,
     isFadeEdgeEnabled: Boolean = false,
     isWheelEffectEnabled: Boolean = false,
-    wheelEffectRotationXDegree: Float = WheelTimePickerDefaults.wheelEffectRotationXDegree,
+    wheelEffectRotationXDegree: Float = WheelTimePickerDefaults.WHEEL_EFFECT_ROTATION_X_DEGREE,
 ) {
     require(visibleItemCount >= 3 && visibleItemCount % 2 == 1) {
         "visibleItemCount must be odd and >= 3"
@@ -305,7 +305,7 @@ private fun AmPmColumn(
     modifier: Modifier = Modifier,
     isFadeEdgeEnabled: Boolean = false,
     isWheelEffectEnabled: Boolean = false,
-    wheelEffectRotationXDegree: Float = WheelTimePickerDefaults.wheelEffectRotationXDegree,
+    wheelEffectRotationXDegree: Float = WheelTimePickerDefaults.WHEEL_EFFECT_ROTATION_X_DEGREE,
 ) {
     val amPmItems = remember(labels) { listOf(labels.am, labels.pm) }.toImmutableList()
 
