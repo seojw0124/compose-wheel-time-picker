@@ -195,13 +195,12 @@ object WheelTimePickerDefaults {
     ): WheelTimePickerTextStyles =
         WheelTimePickerTextStyles(textStyle = textStyle)
 
-    fun amPmLabels(locale: Locale = Locale.getDefault()): WheelTimePickerAmPmLabels {
-        return if (locale.language == Locale.KOREAN.language) {
-            WheelTimePickerAmPmLabels(am = "오전", pm = "오후")
-        } else {
-            WheelTimePickerAmPmLabels(am = "AM", pm = "PM")
+    fun amPmLabels(locale: Locale = Locale.getDefault()): WheelTimePickerAmPmLabels =
+        when (locale.language) {
+            Locale.KOREAN.language -> WheelTimePickerAmPmLabels(am = "오전", pm = "오후")
+            Locale.JAPANESE.language -> WheelTimePickerAmPmLabels(am = "午前", pm = "午後")
+            else -> WheelTimePickerAmPmLabels(am = "AM", pm = "PM")
         }
-    }
 }
 
 @Composable
@@ -505,12 +504,14 @@ private fun BasicScrollableColumn(
                             .height(itemHeight)
                             .graphicsLayer {
                                 val layoutInfo = listState.layoutInfo
-                                val itemInfo = layoutInfo.visibleItemsInfo.find { it.index == index }
+                                val itemInfo =
+                                    layoutInfo.visibleItemsInfo.find { it.index == index }
                                 if (itemInfo != null) {
                                     val viewportCenter =
                                         (layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2f
                                     val itemCenter = itemInfo.offset + itemInfo.size / 2f
-                                    val distanceRatio = (itemCenter - viewportCenter) / itemInfo.size
+                                    val distanceRatio =
+                                        (itemCenter - viewportCenter) / itemInfo.size
                                     val distanceAbs = abs(distanceRatio)
 
                                     if (isWheelEffectEnabled) {
