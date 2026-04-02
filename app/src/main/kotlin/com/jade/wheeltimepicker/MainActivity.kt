@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,63 +47,82 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun WheelTimePickerDemo(modifier: Modifier = Modifier) {
+    // 1. Default Style State
     val defaultState = rememberWheelTimePickerState(initialHour = 10, initialMinute = 30)
-    val fiveRowState = rememberWheelTimePickerState(initialHour = 21, initialMinute = 15)
-    val sevenRowState = rememberWheelTimePickerState(initialHour = 7, initialMinute = 45)
-
-    val darkPickerColors =
-        WheelTimePickerDefaults.colors(
-            selectedTextColor = Color.White,
-            unSelectedTextColor = Color.White,
-            backgroundColor = Color.Black,
-            fadeColor = Color.Black,
-        )
+    // 2. 3D Wheel Effect State
+    val wheelEffectState = rememberWheelTimePickerState(initialHour = 21, initialMinute = 15)
+    // 3. Custom Style State
+    val customStyleState = rememberWheelTimePickerState(initialHour = 7, initialMinute = 45)
 
     Column(
-        modifier =
-            modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(24.dp),
+        verticalArrangement = Arrangement.spacedBy(40.dp) // 섹션 간 간격 확보
     ) {
-        Text(text = "Default")
-        WheelTimePicker(
-            state = defaultState,
-            modifier = Modifier.fillMaxWidth(),
-            amPmLabels = WheelTimePickerAmPmLabels(am = "AM", pm = "PM"),
-        )
-        Text(text = selectedText(defaultState.hour12, defaultState.minute, defaultState.isPm))
+        // --- Section 1: Default Style ---
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("Default Style", style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(16.dp))
+            WheelTimePicker(
+                state = defaultState,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Text(
+                text = "Selected: ${defaultState.hour12}:${defaultState.minute.toString().padStart(2, '0')} ${if (defaultState.isPm) "PM" else "AM"}",
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        HorizontalDivider()
 
-        Text(text = "5 Rows / Dark / Wheel")
-        WheelTimePicker(
-            state = fiveRowState,
-            modifier = Modifier.fillMaxWidth(),
-            colors = darkPickerColors,
-            visibleItemCount = 7,
-            isWheelEffectEnabled = true,
-            unselectedItemMinAlpha = 0.6f,
-            amPmLabels = WheelTimePickerAmPmLabels(am = "AM", pm = "PM"),
-        )
-        Text(text = selectedText(fiveRowState.hour12, fiveRowState.minute, fiveRowState.isPm))
+        // --- Section 2: 3D Wheel Effect ---
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("3D Wheel Effect", style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(16.dp))
+            WheelTimePicker(
+                state = wheelEffectState,
+                modifier = Modifier.fillMaxWidth(),
+                isWheelEffectEnabled = true, // 3D 효과 활성화
+                visibleItemCount = 5,
+                unselectedItemMinAlpha = 0.5f,
+                colors = WheelTimePickerDefaults.colors(
+                    backgroundColor = Color(0xFF1F2121),
+                    selectedTextColor = Color.White,
+                    unSelectedTextColor = Color(0xFFB0B0B0)
+                ),
+                amPmLabels = WheelTimePickerAmPmLabels("AM", "PM") // AM/PM 레이블 커스터마이징
+            )
+            Text(
+                text = "Selected: ${wheelEffectState.hour12}:${wheelEffectState.minute.toString().padStart(2, '0')} ${if (wheelEffectState.isPm) "PM" else "AM"}",
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        HorizontalDivider()
 
-        Text(text = "7 Rows / Dark / Wheel + Fade")
-        WheelTimePicker(
-            state = sevenRowState,
-            modifier = Modifier.fillMaxWidth(),
-            //colors = darkPickerColors,
-            visibleItemCount = 7,
-            itemVerticalPadding = 12.dp,
-            //isWheelEffectEnabled = true,
-            isFadeEdgeEnabled = true,
-            amPmLabels = WheelTimePickerAmPmLabels(am = "AM", pm = "PM"),
-        )
-        Text(text = selectedText(sevenRowState.hour12, sevenRowState.minute, sevenRowState.isPm))
+        // --- Section 3: Custom Colors & Fade ---
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("Custom Colors & Fade", style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(16.dp))
+            WheelTimePicker(
+                state = customStyleState,
+                modifier = Modifier.fillMaxWidth(),
+                isFadeEdgeEnabled = true, // 페이드 효과 활성화
+                visibleItemCount = 7,
+                colors = WheelTimePickerDefaults.colors(
+                    selectedTextColor = Color(0xFF6200EE), // 포인트 컬러
+                    unSelectedTextColor = Color.Gray,
+                    fadeColor = Color.White
+                )
+            )
+            Text(
+                text = "Selected: ${customStyleState.hour12}:${customStyleState.minute.toString().padStart(2, '0')} ${if (customStyleState.isPm) "PM" else "AM"}",
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
     }
 }
 
